@@ -30,12 +30,10 @@ export function InvoicePreview({ onBack, invoiceData }: InvoicePreviewProps) {
 
   const getPaymentTermsText = () => {
     switch (additionalInfo.paymentTerms) {
-      case "15":
-        return "Net 15 - Payment due within 15 days"
       case "30":
         return "Net 30 - Payment due within 30 days"
-      case "60":
-        return "Net 60 - Payment due within 60 days"
+      case "365":
+        return "Net 365 - Payment due within 365 days"
       case "immediate":
         return "Due on Receipt"
       default:

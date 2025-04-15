@@ -352,9 +352,8 @@ export function InvoiceForm({
               <SelectValue placeholder="Select payment terms" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="15">Net 15 - Payment due within 15 days</SelectItem>
               <SelectItem value="30">Net 30 - Payment due within 30 days</SelectItem>
-              <SelectItem value="60">Net 60 - Payment due within 60 days</SelectItem>
+              <SelectItem value="365">Net 365 - Payment due within 365 days</SelectItem>
               <SelectItem value="immediate">Due on Receipt</SelectItem>
             </SelectContent>
           </Select>
