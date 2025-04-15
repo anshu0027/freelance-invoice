@@ -46,50 +46,70 @@ export function InvoicePreview({ onBack, invoiceData }: InvoicePreviewProps) {
   const generatePDF = async () => {
     if (!invoiceRef.current) return
 
-    const element = invoiceRef.current
+    try {
+      const element = invoiceRef.current
 
-    const canvas = await html2canvas(element, {
-      scale: 2,
-      useCORS: true,
-      allowTaint: false,
-      logging: false,
-      imageTimeout: 15000,
-    })
+      // Create a clone of the element to avoid modifying the original
+      const clone = element.cloneNode(true) as HTMLElement
 
-    const pdf = new jsPDF("p", "pt", "a4")
+      // Temporarily replace oklch colors with rgb
+      const elements = clone.querySelectorAll('*')
+      elements.forEach(el => {
+        const style = window.getComputedStyle(el)
+        if (style.color.includes('oklch')) {
+          (el as HTMLElement).style.color = 'rgb(79, 70, 229)' // indigo-700 in rgb
+        }
+        if (style.backgroundColor.includes('oklch')) {
+          (el as HTMLElement).style.backgroundColor = 'rgb(255, 255, 255)' // white in rgb
+        }
+      })
 
-    const pdfWidth = pdf.internal.pageSize.getWidth()
-    const pdfHeight = pdf.internal.pageSize.getHeight()
+      const canvas = await html2canvas(clone, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: false,
+        logging: false,
+        imageTimeout: 15000,
+      })
 
-    const marginX = 30
-    const marginY = 30
-    const availableWidth = pdfWidth - marginX * 2
-    const availableHeight = pdfHeight - marginY * 2
+      const pdf = new jsPDF("p", "pt", "a4")
 
-    const contentRatio = canvas.width / canvas.height
+      const pdfWidth = pdf.internal.pageSize.getWidth()
+      const pdfHeight = pdf.internal.pageSize.getHeight()
 
-    let imgWidth = availableWidth
-    let imgHeight = imgWidth / contentRatio
+      const marginX = 30
+      const marginY = 30
+      const availableWidth = pdfWidth - marginX * 2
+      const availableHeight = pdfHeight - marginY * 2
 
-    if (imgHeight > availableHeight) {
-      imgHeight = availableHeight
-      imgWidth = imgHeight * contentRatio
+      const contentRatio = canvas.width / canvas.height
+
+      let imgWidth = availableWidth
+      let imgHeight = imgWidth / contentRatio
+
+      if (imgHeight > availableHeight) {
+        imgHeight = availableHeight
+        imgWidth = imgHeight * contentRatio
+      }
+
+      const imageData = canvas.toDataURL("image/png")
+      pdf.addImage(imageData, "PNG", marginX, marginY, imgWidth, imgHeight)
+
+      const blob = pdf.output("blob")
+      const url = URL.createObjectURL(blob)
+
+      const link = document.createElement("a")
+      link.href = url
+      const filename = `Invoice_${invoiceDetails.invoiceNumber}_${clientDetails.name.replace(/\s+/g, "_")}.pdf`
+      link.download = filename
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
+    } catch (error) {
+      console.error('Error generating PDF:', error)
+      alert('There was an error generating the PDF. Please try again.')
     }
-
-    const imageData = canvas.toDataURL("image/png")
-    pdf.addImage(imageData, "PNG", marginX, marginY, imgWidth, imgHeight)
-
-    const blob = pdf.output("blob")
-    const url = URL.createObjectURL(blob)
-
-    const link = document.createElement("a")
-    link.href = url
-    const filename = `Invoice_${invoiceDetails.invoiceNumber}_${clientDetails.name.replace(/\s+/g, "_")}.pdf`
-    link.download = filename
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    URL.revokeObjectURL(url)
   }
 
 
@@ -157,7 +177,7 @@ export function InvoicePreview({ onBack, invoiceData }: InvoicePreviewProps) {
                 </td>
                 <td className="border-t pt-4 text-right">{formatCurrency(basePrice)}</td>
               </tr>
-              {discountAmount > 0 && ( 
+              {discountAmount > 0 && (
                 <tr>
                   <td colSpan={2} className="text-right font-medium">
                     Discount ({serviceSelection.discountPercentage}%):
@@ -174,7 +194,7 @@ export function InvoicePreview({ onBack, invoiceData }: InvoicePreviewProps) {
             </tfoot>
           </table>
 
-          {additionalInfo.notes && ( 
+          {additionalInfo.notes && (
             <div className="mb-8">
               <h3 className="font-medium mb-2">Notes:</h3>
               <p className="text-gray-600 whitespace-pre-line border-l-4 border-gray-200 pl-4">{additionalInfo.notes}</p>
