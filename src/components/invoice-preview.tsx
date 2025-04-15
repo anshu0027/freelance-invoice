@@ -52,6 +52,48 @@ export function InvoicePreview({ onBack, invoiceData }: InvoicePreviewProps) {
       // Create a deep clone of the element with all its children
       const clone = element.cloneNode(true) as HTMLElement
 
+      // Convert all colors to RGB
+      const convertToRGB = (color: string): string => {
+        if (color.includes('oklch')) {
+          // Convert oklch to rgb based on common values
+          if (color.includes('indigo-700')) return 'rgb(79, 70, 229)'
+          if (color.includes('gray-600')) return 'rgb(75, 85, 99)'
+          if (color.includes('gray-200')) return 'rgb(229, 231, 235)'
+          if (color.includes('gray-300')) return 'rgb(209, 213, 219)'
+          return 'rgb(0, 0, 0)' // default to black
+        }
+        return color
+      }
+
+      // Process all elements in the clone
+      const processElement = (el: Element) => {
+        const computedStyle = window.getComputedStyle(el)
+
+        // Convert text color
+        const color = computedStyle.color
+        if (color) {
+          (el as HTMLElement).style.color = convertToRGB(color)
+        }
+
+        // Convert background color
+        const bgColor = computedStyle.backgroundColor
+        if (bgColor) {
+          (el as HTMLElement).style.backgroundColor = convertToRGB(bgColor)
+        }
+
+        // Convert border color
+        const borderColor = computedStyle.borderColor
+        if (borderColor) {
+          (el as HTMLElement).style.borderColor = convertToRGB(borderColor)
+        }
+
+        // Process children
+        Array.from(el.children).forEach(processElement)
+      }
+
+      // Process the clone
+      processElement(clone)
+
       // Ensure the clone has the same dimensions and styles
       clone.style.width = element.offsetWidth + 'px'
       clone.style.height = element.offsetHeight + 'px'
