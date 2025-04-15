@@ -7,7 +7,6 @@ import { formatCurrency, formatDate } from "@/lib/utils"
 import { servicesData } from "@/data/services"
 import { jsPDF } from "jspdf"
 import html2canvas from "html2canvas"
-import Image from "next/image"
 
 import type { InvoicePreviewProps } from "@/store/invoice-store"; // Assuming invoice-store.ts is in src/store
 
@@ -184,7 +183,7 @@ export function InvoicePreview({ onBack, invoiceData }: InvoicePreviewProps) {
           </div>
 
           <div className="mt-8 mb-4 flex justify-end">
-            <Image src="/sign.png" alt="Signature" width={150} height={80} className="h-20 w-auto" />
+            <img src="/sign.png" alt="Signature" width={150} height={80} className="h-20 w-auto" />
           </div>
 
           <div className="mt-12 pt-8 border-t-2 border-gray-200 text-center text-gray-600 text-sm">
