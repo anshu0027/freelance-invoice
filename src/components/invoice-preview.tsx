@@ -53,9 +53,8 @@ export function InvoicePreview({ onBack, invoiceData }: InvoicePreviewProps) {
       useCORS: true,
       allowTaint: false,
       logging: false,
-      imageTimeout: 15000, // gives enough time to load images like the signature
+      imageTimeout: 15000,
     })
-
 
     const pdf = new jsPDF("p", "pt", "a4")
 
@@ -77,12 +76,22 @@ export function InvoicePreview({ onBack, invoiceData }: InvoicePreviewProps) {
       imgWidth = imgHeight * contentRatio
     }
 
-    pdf.addImage(canvas.toDataURL("image/png"), "PNG", marginX, marginY, imgWidth, imgHeight)
+    const imageData = canvas.toDataURL("image/png")
+    pdf.addImage(imageData, "PNG", marginX, marginY, imgWidth, imgHeight)
 
+    const blob = pdf.output("blob")
+    const url = URL.createObjectURL(blob)
+
+    const link = document.createElement("a")
+    link.href = url
     const filename = `Invoice_${invoiceDetails.invoiceNumber}_${clientDetails.name.replace(/\s+/g, "_")}.pdf`
-
-    pdf.save(filename)
+    link.download = filename
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
   }
+
 
   return (
     <div className="space-y-6">
