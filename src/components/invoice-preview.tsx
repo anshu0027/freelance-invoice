@@ -49,28 +49,43 @@ export function InvoicePreview({ onBack, invoiceData }: InvoicePreviewProps) {
     try {
       const element = invoiceRef.current
 
-      // Create a clone of the element to avoid modifying the original
+      // Create a deep clone of the element with all its children
       const clone = element.cloneNode(true) as HTMLElement
 
-      // Temporarily replace oklch colors with rgb
-      const elements = clone.querySelectorAll('*')
-      elements.forEach(el => {
-        const style = window.getComputedStyle(el)
-        if (style.color.includes('oklch')) {
-          (el as HTMLElement).style.color = 'rgb(79, 70, 229)' // indigo-700 in rgb
-        }
-        if (style.backgroundColor.includes('oklch')) {
-          (el as HTMLElement).style.backgroundColor = 'rgb(255, 255, 255)' // white in rgb
-        }
-      })
+      // Ensure the clone has the same dimensions and styles
+      clone.style.width = element.offsetWidth + 'px'
+      clone.style.height = element.offsetHeight + 'px'
+      clone.style.position = 'absolute'
+      clone.style.top = '0'
+      clone.style.left = '0'
 
-      const canvas = await html2canvas(clone, {
+      // Create a container for the clone
+      const container = document.createElement('div')
+      container.style.position = 'relative'
+      container.style.width = element.offsetWidth + 'px'
+      container.style.height = element.offsetHeight + 'px'
+      container.appendChild(clone)
+
+      // Add the container to the document temporarily
+      document.body.appendChild(container)
+
+      // Wait for styles to be applied
+      await new Promise(resolve => setTimeout(resolve, 100))
+
+      const canvas = await html2canvas(container, {
         scale: 2,
         useCORS: true,
         allowTaint: false,
         logging: false,
         imageTimeout: 15000,
+        width: element.offsetWidth,
+        height: element.offsetHeight,
+        windowWidth: element.offsetWidth,
+        windowHeight: element.offsetHeight,
       })
+
+      // Remove the temporary container
+      document.body.removeChild(container)
 
       const pdf = new jsPDF("p", "pt", "a4")
 
