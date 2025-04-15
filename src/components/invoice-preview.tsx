@@ -49,72 +49,55 @@ export function InvoicePreview({ onBack, invoiceData }: InvoicePreviewProps) {
     try {
       const element = invoiceRef.current
 
-      // Create a deep clone of the element with all its children
-      const clone = element.cloneNode(true) as HTMLElement
+      // Create a simplified version of the invoice
+      const simplifiedInvoice = document.createElement('div')
+      simplifiedInvoice.style.width = element.offsetWidth + 'px'
+      simplifiedInvoice.style.height = element.offsetHeight + 'px'
+      simplifiedInvoice.style.position = 'absolute'
+      simplifiedInvoice.style.top = '0'
+      simplifiedInvoice.style.left = '0'
+      simplifiedInvoice.style.backgroundColor = '#FFFFFF'
+      simplifiedInvoice.style.padding = '32px'
+      simplifiedInvoice.style.fontFamily = 'Arial, sans-serif'
 
-      // Convert all colors to RGB
-      const convertToRGB = (color: string): string => {
-        if (color.includes('oklch')) {
-          // Convert oklch to rgb based on common values
-          if (color.includes('indigo-700')) return 'rgb(79, 70, 229)'
-          if (color.includes('gray-600')) return 'rgb(75, 85, 99)'
-          if (color.includes('gray-200')) return 'rgb(229, 231, 235)'
-          if (color.includes('gray-300')) return 'rgb(209, 213, 219)'
-          return 'rgb(0, 0, 0)' // default to black
+      // Copy the content but with simplified styling
+      const content = element.innerHTML
+        .replace(/text-\[#[0-9A-Fa-f]{6}\]/g, '') // Remove hex color classes
+        .replace(/text-[a-z]+-[0-9]+/g, '') // Remove Tailwind color classes
+        .replace(/bg-\[#[0-9A-Fa-f]{6}\]/g, '') // Remove background hex colors
+        .replace(/bg-[a-z]+-[0-9]+/g, '') // Remove Tailwind background colors
+        .replace(/border-\[#[0-9A-Fa-f]{6}\]/g, '') // Remove border hex colors
+        .replace(/border-[a-z]+-[0-9]+/g, '') // Remove Tailwind border colors
+
+      simplifiedInvoice.innerHTML = content
+
+      // Apply basic styling to all elements
+      const styleElement = document.createElement('style')
+      styleElement.textContent = `
+        * {
+          color: #000000 !important;
+          background-color: #FFFFFF !important;
+          border-color: #E5E7EB !important;
         }
-        return color
-      }
-
-      // Process all elements in the clone
-      const processElement = (el: Element) => {
-        const computedStyle = window.getComputedStyle(el)
-
-        // Convert text color
-        const color = computedStyle.color
-        if (color) {
-          (el as HTMLElement).style.color = convertToRGB(color)
+        .text-indigo-700, .text-[#4F46E5] {
+          color: #4F46E5 !important;
         }
-
-        // Convert background color
-        const bgColor = computedStyle.backgroundColor
-        if (bgColor) {
-          (el as HTMLElement).style.backgroundColor = convertToRGB(bgColor)
+        .bg-gray-100, .bg-[#F3F4F6] {
+          background-color: #F3F4F6 !important;
         }
-
-        // Convert border color
-        const borderColor = computedStyle.borderColor
-        if (borderColor) {
-          (el as HTMLElement).style.borderColor = convertToRGB(borderColor)
+        .border-gray-200, .border-[#E5E7EB] {
+          border-color: #E5E7EB !important;
         }
+        .border-gray-300, .border-[#D1D5DB] {
+          border-color: #D1D5DB !important;
+        }
+      `
+      simplifiedInvoice.appendChild(styleElement)
 
-        // Process children
-        Array.from(el.children).forEach(processElement)
-      }
+      // Add to document temporarily
+      document.body.appendChild(simplifiedInvoice)
 
-      // Process the clone
-      processElement(clone)
-
-      // Ensure the clone has the same dimensions and styles
-      clone.style.width = element.offsetWidth + 'px'
-      clone.style.height = element.offsetHeight + 'px'
-      clone.style.position = 'absolute'
-      clone.style.top = '0'
-      clone.style.left = '0'
-
-      // Create a container for the clone
-      const container = document.createElement('div')
-      container.style.position = 'relative'
-      container.style.width = element.offsetWidth + 'px'
-      container.style.height = element.offsetHeight + 'px'
-      container.appendChild(clone)
-
-      // Add the container to the document temporarily
-      document.body.appendChild(container)
-
-      // Wait for styles to be applied
-      await new Promise(resolve => setTimeout(resolve, 100))
-
-      const canvas = await html2canvas(container, {
+      const canvas = await html2canvas(simplifiedInvoice, {
         scale: 2,
         useCORS: true,
         allowTaint: false,
@@ -126,8 +109,8 @@ export function InvoicePreview({ onBack, invoiceData }: InvoicePreviewProps) {
         windowHeight: element.offsetHeight,
       })
 
-      // Remove the temporary container
-      document.body.removeChild(container)
+      // Remove temporary element
+      document.body.removeChild(simplifiedInvoice)
 
       const pdf = new jsPDF("p", "pt", "a4")
 
