@@ -179,51 +179,51 @@ export function InvoicePreview({ onBack, invoiceData }: InvoicePreviewProps) {
         <Button onClick={generatePDF}>Download PDF</Button>
       </div>
 
-      <Card className="bg-white p-8 max-w-4xl mx-auto">
+      <Card className="bg-[#FFFFFF] p-8 max-w-4xl mx-auto">
         <div ref={invoiceRef} className="p-8">
           <div className="flex justify-between items-start mb-12">
             <div>
               <h1 className="text-2xl font-bold">{freelancerDetails.name}</h1>
-              <p className="text-gray-600">{freelancerDetails.email}</p>
-              <p className="text-gray-600">{freelancerDetails.phone}</p>
-              <p className="text-gray-600 whitespace-pre-line">{freelancerDetails.address}</p>
+              <p className="text-[#4B5563]">{freelancerDetails.email}</p>
+              <p className="text-[#4B5563]">{freelancerDetails.phone}</p>
+              <p className="text-[#4B5563] whitespace-pre-line">{freelancerDetails.address}</p>
             </div>
             <div className="text-right">
-              <h1 className="text-3xl font-bold text-indigo-700 mb-2">INVOICE</h1>
-              <p className="text-gray-600">
+              <h1 className="text-3xl font-bold text-[#4F46E5] mb-2">INVOICE</h1>
+              <p className="text-[#4B5563]">
                 <span className="font-medium">Invoice #:</span> {invoiceDetails.invoiceNumber}
               </p>
-              <p className="text-gray-600">
+              <p className="text-[#4B5563]">
                 <span className="font-medium">Date:</span> {formatDate(invoiceDetails.invoiceDate)}
               </p>
-              <p className="text-gray-600">
+              <p className="text-[#4B5563]">
                 <span className="font-medium">Due Date:</span> {formatDate(invoiceDetails.dueDate)}
               </p>
             </div>
           </div>
 
           <div className="mb-10">
-            <h2 className="text-gray-600 font-medium mb-2">Billed To:</h2>
+            <h2 className="text-[#4B5563] font-medium mb-2">Billed To:</h2>
             <h3 className="text-lg font-bold">{clientDetails.name}</h3>
-            <p className="text-gray-600">{clientDetails.email}</p>
-            <p className="text-gray-600">{clientDetails.phone}</p>
-            <p className="text-gray-600 whitespace-pre-line">{clientDetails.address}</p>
+            <p className="text-[#4B5563]">{clientDetails.email}</p>
+            <p className="text-[#4B5563]">{clientDetails.phone}</p>
+            <p className="text-[#4B5563] whitespace-pre-line">{clientDetails.address}</p>
           </div>
 
-          <table className="min-w-full bg-white border-collapse mb-10">
+          <table className="min-w-full bg-[#FFFFFF] border-collapse mb-10">
             <thead>
-              <tr className="bg-gray-100">
-                <th className="py-3 px-4 text-left border-b-2 border-gray-300 font-semibold">Service</th>
-                <th className="py-3 px-4 text-left border-b-2 border-gray-300 font-semibold">Description</th>
-                <th className="py-3 px-4 text-right border-b-2 border-gray-300 font-semibold">Quantity</th>
+              <tr className="bg-[#F3F4F6]">
+                <th className="py-3 px-4 text-left border-b-2 border-[#D1D5DB] font-semibold">Service</th>
+                <th className="py-3 px-4 text-left border-b-2 border-[#D1D5DB] font-semibold">Description</th>
+                <th className="py-3 px-4 text-right border-b-2 border-[#D1D5DB] font-semibold">Quantity</th>
               </tr>
             </thead>
             <tbody>
               {selectedPackage?.services.map((service, index) => (
                 <tr key={index}>
-                  <td className="py-3 px-4 border-b border-gray-200">{service.name}</td>
-                  <td className="py-3 px-4 border-b border-gray-200">{service.description}</td>
-                  <td className="py-3 px-4 text-right border-b border-gray-200">{service.quantity}</td>
+                  <td className="py-3 px-4 border-b border-[#E5E7EB]">{service.name}</td>
+                  <td className="py-3 px-4 border-b border-[#E5E7EB]">{service.description}</td>
+                  <td className="py-3 px-4 text-right border-b border-[#E5E7EB]">{service.quantity}</td>
                 </tr>
               ))}
             </tbody>
@@ -246,7 +246,7 @@ export function InvoicePreview({ onBack, invoiceData }: InvoicePreviewProps) {
                 <td colSpan={2} className="text-right font-bold">
                   Total:
                 </td>
-                <td className="text-right font-bold text-indigo-700">{formatCurrency(finalPrice)}</td>
+                <td className="text-right font-bold text-[#4F46E5]">{formatCurrency(finalPrice)}</td>
               </tr>
             </tfoot>
           </table>
@@ -254,21 +254,21 @@ export function InvoicePreview({ onBack, invoiceData }: InvoicePreviewProps) {
           {additionalInfo.notes && (
             <div className="mb-8">
               <h3 className="font-medium mb-2">Notes:</h3>
-              <p className="text-gray-600 whitespace-pre-line border-l-4 border-gray-200 pl-4">{additionalInfo.notes}</p>
+              <p className="text-[#4B5563] whitespace-pre-line border-l-4 border-[#E5E7EB] pl-4">{additionalInfo.notes}</p>
             </div>
           )}
 
           <div className="mb-8">
             <h3 className="font-medium mb-2">Payment Terms:</h3>
-            <p className="text-gray-600">{getPaymentTermsText()}</p>
+            <p className="text-[#4B5563]">{getPaymentTermsText()}</p>
           </div>
 
           <div className="mb-8">
             <h3 className="font-medium mb-2">Payment Method:</h3>
-            <p className="text-gray-600 uppercase">{additionalInfo.paymentMethod}</p>
+            <p className="text-[#4B5563] uppercase">{additionalInfo.paymentMethod}</p>
           </div>
 
-          <div className="mt-12 pt-8 border-t-2 border-gray-200 text-center text-gray-600 text-sm">
+          <div className="mt-12 pt-8 border-t-2 border-[#E5E7EB] text-center text-[#4B5563] text-sm">
             <p>Thank you for believing us!</p>
             <p className="mt-1">{freelancerDetails.name} | {freelancerDetails.email}</p>
           </div>
