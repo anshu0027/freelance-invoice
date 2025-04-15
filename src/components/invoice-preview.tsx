@@ -182,10 +182,6 @@ export function InvoicePreview({ onBack, invoiceData }: InvoicePreviewProps) {
             <p className="text-gray-600 uppercase">{additionalInfo.paymentMethod}</p>
           </div>
 
-          <div className="mt-8 mb-4 flex justify-end">
-            <img src="/sign.png" alt="Signature" width={150} height={80} className="h-20 w-auto" />
-          </div>
-
           <div className="mt-12 pt-8 border-t-2 border-gray-200 text-center text-gray-600 text-sm">
             <p>Thank you for believing us!</p>
             <p className="mt-1">{freelancerDetails.name} | {freelancerDetails.email}</p>
